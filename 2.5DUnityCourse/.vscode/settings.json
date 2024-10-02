@@ -1,8 +1,6 @@
 {
     "dotnet.preferCSharpExtension": true,
     "files.exclude": {
-        "**/*.csproj": true,
-        "**/*.sln": true,
         "**/.DS_Store": true,
         "**/.git": true,
         "**/.vs": true,
