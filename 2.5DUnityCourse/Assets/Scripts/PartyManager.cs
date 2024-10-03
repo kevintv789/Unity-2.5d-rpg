@@ -29,6 +29,11 @@ public class PartyManager : MonoBehaviour
             }
         }
     }
+
+    public List<PartyMember> GetCurrentParty()
+    {
+        return currentParty;
+    }
 }
 
 [System.Serializable] // This makes the class visible in the inspector, so we can see CurrentParty

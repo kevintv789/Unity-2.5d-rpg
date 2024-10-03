@@ -30,6 +30,11 @@ public class EnemyManager : MonoBehaviour
             }
         }
     }
+
+    public List<Enemy> GetCurrentEnemies()
+    {
+        return currentEnemies;
+    }
 }
 
 [System.Serializable] // This makes the class visible in the inspector, so we can see CurrentEnemies
@@ -42,10 +47,12 @@ public class Enemy
     public int CurrentHealth;
     public int Strength;
     public int Initiative;
+    public int Level;
     public GameObject EnemyBattleVisualPrefab; // What will be displayed in battle scene
 
     public Enemy(EnemyInfo info, int level)
     {
+        Level = level;
         float levelModifier = LEVEL_MODIFIER * level;
 
         Name = info.Name;

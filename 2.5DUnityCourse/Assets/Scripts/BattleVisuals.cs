@@ -20,14 +20,9 @@ public class BattleVisuals : MonoBehaviour
     private const string IS_HIT_PARAM = "IsHit";
     private const string IS_DEAD_PARAM = "IsDead";
 
-    private void Awake()
-    {
-        animator = GetComponent<Animator>();
-    }
-
     private void Start()
     {
-        SetStartingValues(100, 100, 5);
+        animator = GetComponent<Animator>();
     }
 
     public void SetStartingValues(int maxHealth, int currentHealth, int level)
