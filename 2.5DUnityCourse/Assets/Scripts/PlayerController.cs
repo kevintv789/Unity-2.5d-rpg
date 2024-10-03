@@ -11,12 +11,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private SpriteRenderer playerSprite;
 
+    [SerializeField]
+    private LayerMask grassLayer;
+
+    [SerializeField]
+    private int stepsInGrass;
+
     private PlayerControls playerControls;
     private Rigidbody rb;
     private Vector3 movement;
+    private bool movingInGrass;
+    private float stepTimer;
 
     // Reference to a parameter in the animator
     private const string IS_WALK_PARAM = "IsWalking";
+    private const float TIME_PER_STEP = 0.5f; // how long it takes to count as a step
 
     private void Awake()
     {
@@ -56,5 +65,20 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         rb.MovePosition(transform.position + movement * moveSpeed * Time.fixedDeltaTime);
+
+        // Retrieve all the colliders in GrassTriggers and check if the player is colliding with them
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 1, grassLayer);
+        movingInGrass = colliders.Length > 0 && movement != Vector3.zero;
+
+        if (movingInGrass)
+        {
+            stepTimer += Time.fixedDeltaTime;
+
+            if (stepTimer >= TIME_PER_STEP)
+            {
+                stepsInGrass++;
+                stepTimer = 0;
+            }
+        }
     }
 }

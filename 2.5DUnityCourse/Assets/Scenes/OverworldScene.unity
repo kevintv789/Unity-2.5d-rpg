@@ -254,6 +254,10 @@ MonoBehaviour:
   moveSpeed: 5
   animator: {fileID: 472040708}
   playerSprite: {fileID: 472040707}
+  grassLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  stepsInGrass: 0
 --- !u!54 &20024149
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1000,7 +1004,7 @@ Transform:
   m_GameObject: {fileID: 935524426}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.21, y: 2.95, z: 27.03}
+  m_LocalPosition: {x: 3.21, y: 1, z: 27.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1025,8 +1029,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 11.6, y: 0.36, z: 15.37}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 11.6, y: 0.36, z: 18.80728}
+  m_Center: {x: 0, y: 0, z: -1.7186499}
 --- !u!1 &1275807177
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,7 +1088,7 @@ Transform:
   m_GameObject: {fileID: 1429897068}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.86, y: 2.95, z: 19.13}
+  m_LocalPosition: {x: -18.86, y: 1, z: 19.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1154,7 +1158,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1725361456}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GrassTriggers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
