@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class BattleSystem : MonoBehaviour
@@ -20,8 +21,24 @@ public class BattleSystem : MonoBehaviour
     [SerializeField]
     private Transform[] enemySpawnPoints;
 
+    [Header("UI")]
+    [SerializeField]
+    private GameObject[] enemySelectionButtons;
+
+    [SerializeField]
+    private GameObject battleMenu;
+
+    [SerializeField]
+    private GameObject enemySelectionMenu;
+
+    [SerializeField]
+    private TextMeshProUGUI actionText;
+
     private PartyManager partyManager;
     private EnemyManager enemyManager;
+    private int currentPlayerIndex;
+
+    private const string ACTION_TEXT_FORMAT = "{0}'s Action:";
 
     void Start()
     {
@@ -30,6 +47,8 @@ public class BattleSystem : MonoBehaviour
 
         CreatePartyEntities();
         CreateEnemyEntities();
+
+        ShowBattleMenu();
     }
 
     private void CreatePartyEntities()
@@ -100,6 +119,43 @@ public class BattleSystem : MonoBehaviour
             enemyBattlers.Add(battler);
             allBattlers.Add(battler);
             i++;
+        }
+    }
+
+    public void ShowBattleMenu()
+    {
+        actionText.text = string.Format(
+            ACTION_TEXT_FORMAT,
+            playerBattlers[currentPlayerIndex].Name
+        );
+
+        battleMenu.SetActive(true);
+    }
+
+    public void ShowEnemySelectionMenu()
+    {
+        battleMenu.SetActive(false);
+        SetEnemySelectionButtons();
+        enemySelectionMenu.SetActive(true);
+    }
+
+    private void SetEnemySelectionButtons()
+    {
+        // disable all buttons
+        foreach (GameObject button in enemySelectionButtons)
+        {
+            button.SetActive(false);
+        }
+
+        // enable buttons for enemies that are not dead
+        for (int i = 0; i < enemyBattlers.Count; i++)
+        {
+            if (enemyBattlers[i].CurrentHealth > 0)
+            {
+                enemySelectionButtons[i].SetActive(true);
+                enemySelectionButtons[i].GetComponentInChildren<TextMeshProUGUI>().text =
+                    enemyBattlers[i].Name;
+            }
         }
     }
 }
