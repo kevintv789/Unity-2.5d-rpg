@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,19 +18,28 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private int stepsInGrass;
 
+    [SerializeField]
+    private int minStepsToEncounter;
+
+    [SerializeField]
+    private int maxStepsToEncounter;
+
     private PlayerControls playerControls;
     private Rigidbody rb;
     private Vector3 movement;
     private bool movingInGrass;
     private float stepTimer;
+    private int stepsToEncounter;
 
     // Reference to a parameter in the animator
     private const string IS_WALK_PARAM = "IsWalking";
     private const float TIME_PER_STEP = 0.5f; // how long it takes to count as a step
+    private const string BATTLE_SCENE = "BattleScene";
 
     private void Awake()
     {
         playerControls = new PlayerControls();
+        CalculateStepsToEncounter();
     }
 
     private void OnEnable()
@@ -78,7 +88,17 @@ public class PlayerController : MonoBehaviour
             {
                 stepsInGrass++;
                 stepTimer = 0;
+
+                if (stepsInGrass >= stepsToEncounter)
+                {
+                    SceneManager.LoadScene(BATTLE_SCENE);
+                }
             }
         }
+    }
+
+    private void CalculateStepsToEncounter()
+    {
+        stepsToEncounter = Random.Range(minStepsToEncounter, maxStepsToEncounter);
     }
 }

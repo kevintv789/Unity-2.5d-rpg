@@ -258,6 +258,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   stepsInGrass: 0
+  minStepsToEncounter: 2
+  maxStepsToEncounter: 15
 --- !u!54 &20024149
 Rigidbody:
   m_ObjectHideFlags: 0
