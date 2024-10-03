@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NUnit.Framework.Internal;
 using TMPro;
 using UnityEngine;
 
@@ -34,6 +35,12 @@ public class BattleSystem : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI actionText;
 
+    [SerializeField]
+    private GameObject bottomTextPopup;
+
+    [SerializeField]
+    private TextMeshProUGUI bottomText;
+
     private PartyManager partyManager;
     private EnemyManager enemyManager;
     private int currentPlayerIndex;
@@ -49,6 +56,8 @@ public class BattleSystem : MonoBehaviour
         CreateEnemyEntities();
 
         ShowBattleMenu();
+
+        AttackAction(playerBattlers[0], enemyBattlers[0]);
     }
 
     private void CreatePartyEntities()
@@ -158,11 +167,73 @@ public class BattleSystem : MonoBehaviour
             }
         }
     }
+
+    public void SelectEnemy(int curEnemyIndex)
+    {
+        // Set party member's target to the enemy they selected
+        BattleEntities currentPlayer = playerBattlers[currentPlayerIndex];
+        currentPlayer.SetTargetIndex(allBattlers.IndexOf(enemyBattlers[curEnemyIndex]));
+
+        currentPlayer.BattleAction = BattleEntities.Action.Attack;
+        currentPlayerIndex++;
+
+        // Create a reference for enemy target
+        BattleEntities currentTarget = enemyBattlers[curEnemyIndex];
+
+        // If all players have selected
+        if (currentPlayerIndex >= playerBattlers.Count)
+        {
+            // Start battle
+            StartBattle();
+        }
+        else
+        {
+            // Show the next player's battle menu
+            enemySelectionMenu.SetActive(false);
+            ShowBattleMenu();
+        }
+    }
+
+    private void StartBattle()
+    {
+        enemySelectionMenu.SetActive(false);
+    }
+
+    private void AttackAction(BattleEntities currentAttacker, BattleEntities currentTarget)
+    {
+        // Get damage
+        int damage = (int)(currentAttacker.Strength * 1.5f);
+
+        // play attack animation
+        currentAttacker.BattleVisuals.PlayAttackAnimation();
+
+        // dealing the damage
+        currentTarget.CurrentHealth -= damage;
+        currentTarget.BattleVisuals.PlayHitAnimation();
+
+        // update the UI
+        currentTarget.UpdateUI();
+
+        bottomText.text = string.Format(
+            "{0} attacked {1} for {2} damage",
+            currentAttacker.Name,
+            currentTarget.Name,
+            damage
+        );
+    }
 }
 
 [System.Serializable]
 public class BattleEntities
 {
+    public enum Action
+    {
+        Attack,
+        Run,
+    };
+
+    public Action BattleAction;
+
     public string Name;
     public int MaxHealth;
     public int CurrentHealth;
@@ -171,6 +242,7 @@ public class BattleEntities
     public int Strength;
     public bool IsPlayer;
     public BattleVisuals BattleVisuals;
+    public int TargetIndex;
 
     public BattleEntities(
         string name,
@@ -194,5 +266,15 @@ public class BattleEntities
     public void SetBattleVisuals(BattleVisuals battleVisuals)
     {
         BattleVisuals = battleVisuals;
+    }
+
+    public void SetTargetIndex(int targetIndex)
+    {
+        TargetIndex = targetIndex;
+    }
+
+    public void UpdateUI()
+    {
+        BattleVisuals.ChangeHealth(CurrentHealth);
     }
 }
