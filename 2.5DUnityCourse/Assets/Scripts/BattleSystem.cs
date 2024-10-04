@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -73,6 +74,7 @@ public class BattleSystem : MonoBehaviour
         CreateEnemyEntities();
 
         ShowBattleMenu();
+        DetermineBattleOrder();
     }
 
     private IEnumerator BattleRoutine()
@@ -92,8 +94,7 @@ public class BattleSystem : MonoBehaviour
                     break;
                 case BattleEntities.Action.Run:
                     // Run action
-                    Debug.Log("Run action");
-                    StartCoroutine(RunRoutine());
+                    yield return StartCoroutine(RunRoutine());
                     break;
                 default:
                     Debug.LogError("No action selected");
@@ -114,11 +115,30 @@ public class BattleSystem : MonoBehaviour
 
     private IEnumerator RunRoutine()
     {
-        bottomText.text = "You ran away!";
-        yield return new WaitForSeconds(TURN_DURATION);
+        if (battleState == BattleState.BattlePhase)
+        {
+            int runChance = Random.Range(0, 100);
+            if (runChance >= 30)
+            {
+                bottomText.text = "You ran away!";
 
-        // Go back to the overworld scene
-        SceneManager.LoadScene("OverworldScene");
+                battleState = BattleState.RunPhase;
+                yield return new WaitForSeconds(TURN_DURATION);
+
+                allBattlers.Clear();
+                playerBattlers.Clear();
+                enemyBattlers.Clear();
+
+                // Go back to the overworld scene
+                SceneManager.LoadScene("OverworldScene");
+                yield break;
+            }
+            else
+            {
+                bottomText.text = "You failed to run away!";
+                yield return new WaitForSeconds(TURN_DURATION);
+            }
+        }
     }
 
     private IEnumerator AttackRoutine(BattleEntities currentBattler)
@@ -314,7 +334,28 @@ public class BattleSystem : MonoBehaviour
 
     public void SelectRun()
     {
-        battleState = BattleState.RunPhase;
+        battleState = BattleState.SelectionPhase;
+
+        // Set party member's target to the enemy they selected
+        BattleEntities currentPlayer = playerBattlers[currentPlayerIndex];
+
+        currentPlayer.BattleAction = BattleEntities.Action.Run;
+        currentPlayerIndex++;
+
+        battleMenu.SetActive(false);
+
+        // If all players have selected
+        if (currentPlayerIndex >= playerBattlers.Count)
+        {
+            // Start battle
+            StartCoroutine(BattleRoutine());
+        }
+        else
+        {
+            // Show the next player's battle menu
+            enemySelectionMenu.SetActive(false);
+            ShowBattleMenu();
+        }
     }
 
     public void SelectEnemy(int curEnemyIndex)
@@ -371,6 +412,14 @@ public class BattleSystem : MonoBehaviour
         {
             partyManager.SaveHealth(i, playerBattlers[i].CurrentHealth);
         }
+    }
+
+    private void DetermineBattleOrder()
+    {
+        // Sort allBattlers by initiative in ascending order
+        allBattlers.Sort(
+            (battler1, battler2) => -battler1.Initiative.CompareTo(battler2.Initiative)
+        );
     }
 }
 
