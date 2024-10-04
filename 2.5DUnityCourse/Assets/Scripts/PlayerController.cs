@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     private bool movingInGrass;
     private float stepTimer;
     private int stepsToEncounter;
+    private PartyManager partyManager;
 
     // Reference to a parameter in the animator
     private const string IS_WALK_PARAM = "IsWalking";
@@ -50,6 +51,12 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        partyManager = FindFirstObjectByType<PartyManager>();
+
+        if (partyManager.GetPosition() != Vector3.zero)
+        {
+            transform.position = partyManager.GetPosition();
+        }
     }
 
     private void Update()
@@ -91,6 +98,7 @@ public class PlayerController : MonoBehaviour
 
                 if (stepsInGrass >= stepsToEncounter)
                 {
+                    partyManager.SetPosition(transform.position);
                     SceneManager.LoadScene(BATTLE_SCENE);
                 }
             }
