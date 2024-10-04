@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemyManager : MonoBehaviour
 {
@@ -13,9 +14,22 @@ public class EnemyManager : MonoBehaviour
     [SerializeField]
     private EnemyInfo defaultEnemy;
 
+    private static GameObject instance;
+
     private void Awake()
     {
-        AddEnemyByName("Slime", 1);
+        // Make sure there is only one instance of this object
+        // This is useful for scenes that have multiple enemy managers
+        // This is useful for persisting data across scenes
+        if (instance == null)
+        {
+            instance = gameObject;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void AddEnemyByName(string name, int level)
@@ -34,6 +48,21 @@ public class EnemyManager : MonoBehaviour
     public List<Enemy> GetCurrentEnemies()
     {
         return currentEnemies;
+    }
+
+    public void GenerateEnemiesByEncounter(Encounter[] encounters, int maxNumEnemies)
+    {
+        currentEnemies.Clear();
+
+        int numEnemies = Random.Range(1, maxNumEnemies + 1);
+
+        for (int i = 0; i < numEnemies; i++)
+        {
+            // Get a random encounter
+            Encounter encounter = encounters[Random.Range(0, encounters.Length)];
+            int level = Random.Range(encounter.LevelMin, encounter.LevelMax);
+            AddEnemyByName(encounter.Enemy.Name, level);
+        }
     }
 }
 

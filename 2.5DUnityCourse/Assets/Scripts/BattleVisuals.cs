@@ -49,7 +49,7 @@ public class BattleVisuals : MonoBehaviour
         {
             // Play death animation and destroy object
             PlayDeathAnimation();
-            Destroy(gameObject, 1f);
+            // Destroy(gameObject, 1f);
         }
 
         UpdateHealthBar();
