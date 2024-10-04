@@ -87,6 +87,11 @@ public class BattleSystem : MonoBehaviour
         {
             BattleEntities currentBattler = allBattlers[i];
 
+            if (currentBattler.CurrentHealth <= 0)
+            {
+                continue;
+            }
+
             switch (currentBattler.BattleAction)
             {
                 case BattleEntities.Action.Attack:
@@ -102,6 +107,8 @@ public class BattleSystem : MonoBehaviour
             }
         }
 
+        RemoveDeadBattlers();
+
         if (battleState == BattleState.BattlePhase)
         {
             // repeat the loop
@@ -111,6 +118,17 @@ public class BattleSystem : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    private void RemoveDeadBattlers()
+    {
+        for (int i = 0; i < allBattlers.Count; i++)
+        {
+            if (allBattlers[i].CurrentHealth <= 0)
+            {
+                allBattlers.RemoveAt(i);
+            }
+        }
     }
 
     private IEnumerator RunRoutine()
@@ -147,10 +165,7 @@ public class BattleSystem : MonoBehaviour
         if (currentBattler.IsPlayer)
         {
             // If the target is a player or is out of bounds, set the target to a random enemy
-            if (
-                allBattlers[currentBattler.TargetIndex].IsPlayer
-                || currentBattler.TargetIndex >= allBattlers.Count
-            )
+            if (allBattlers[currentBattler.TargetIndex].CurrentHealth <= 0)
             {
                 currentBattler.SetTargetIndex(allBattlers.IndexOf(GetRandomEnemy()));
             }
@@ -166,7 +181,6 @@ public class BattleSystem : MonoBehaviour
                 yield return new WaitForSeconds(TURN_DURATION);
 
                 enemyBattlers.Remove(currentTarget);
-                allBattlers.Remove(currentTarget);
 
                 if (enemyBattlers.Count == 0)
                 {
@@ -193,7 +207,6 @@ public class BattleSystem : MonoBehaviour
                 // Player is dead
                 battleState = BattleState.LostPhase;
                 playerBattlers.Remove(currentTarget);
-                allBattlers.Remove(currentTarget);
 
                 if (playerBattlers.Count <= 0)
                 {
