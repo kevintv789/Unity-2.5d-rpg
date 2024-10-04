@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework.Internal;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -226,7 +224,13 @@ public class BattleSystem : MonoBehaviour
                     Quaternion.identity
                 )
                 .GetComponent<BattleVisuals>();
-            tempBattleVisuals.SetStartingValues(member.MaxHealth, member.MaxHealth, member.Level);
+
+            tempBattleVisuals.SetStartingValues(
+                member.MaxHealth,
+                member.CurrentHealth,
+                member.Level
+            );
+
             battler.SetBattleVisuals(tempBattleVisuals);
 
             playerBattlers.Add(battler);
@@ -357,6 +361,16 @@ public class BattleSystem : MonoBehaviour
             currentTarget.Name,
             damage
         );
+
+        SavePlayerHealth();
+    }
+
+    private void SavePlayerHealth()
+    {
+        for (int i = 0; i < playerBattlers.Count; i++)
+        {
+            partyManager.SaveHealth(i, playerBattlers[i].CurrentHealth);
+        }
     }
 }
 
